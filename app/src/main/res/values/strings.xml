@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Basic Codelab</string>
+    <string name="title_activity_patching">PatchingActivity</string>
 </resources>
