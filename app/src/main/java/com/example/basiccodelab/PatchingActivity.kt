@@ -7,9 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ElevatedButton
@@ -36,9 +34,9 @@ class PatchingActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.primary
                 ) {
-                    Progress()
+                    Progress(0.25f, "Downloading patch")
                 }
             }
         }
@@ -46,13 +44,18 @@ class PatchingActivity : ComponentActivity() {
 }
 
 @Composable
-fun Progress() {
-    val progressAmount = remember { mutableStateOf(0.5f) }
+fun Progress(amount: Float, state: String) {
+    val progressAmount = remember { mutableStateOf(0.0f) }
     val showDetails = remember { mutableStateOf(true) }
     Column(modifier = Modifier.padding(4.dp), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(text = "Updating game data", modifier = Modifier.padding(4.dp, 8.dp, 4.dp, 32.dp))
-        Text(text = "...", modifier = Modifier.padding(4.dp, 4.dp, 4.dp, 16.dp))
-        LinearProgressIndicator(progressAmount.value, modifier = Modifier.padding(4.dp))
+
+        Text(text = state, modifier = Modifier.padding(4.dp, 4.dp, 4.dp, 16.dp))
+
+        progressAmount.value = amount
+        LinearProgressIndicator(progressAmount.value, modifier = Modifier.padding(4.dp),
+        color = Color.Black)
+
         ElevatedButton(modifier = Modifier.padding(4.dp, 48.dp, 4.dp, 4.dp),
             onClick = {
                 showDetails.value = !showDetails.value
@@ -60,6 +63,8 @@ fun Progress() {
         ) {
             Text(if (showDetails.value) "Hide details" else "Show details")
         }
+
+        // Show TTY
         if (showDetails.value) {
             Tty()
         }
@@ -77,7 +82,7 @@ fun Tty() {
             .verticalScroll(logState)
     ) {
         repeat(40) {
-            Text("Line $it of tty...", modifier = Modifier.padding(2.dp))
+            Text("Line $it of tty...", modifier = Modifier.padding(2.dp), color = Color.Black)
         }
     }
 }
@@ -86,6 +91,6 @@ fun Tty() {
 @Composable
 fun PatchingPreview() {
     BasicCodelabTheme {
-        Progress()
+        Progress(0.5f, "Unpacking assets")
     }
 }
