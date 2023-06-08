@@ -4,7 +4,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -25,7 +27,9 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.core.content.ContextCompat.startActivity
 
 val nameList = listOf("World", "Compose")
@@ -37,7 +41,16 @@ class MainActivity : ComponentActivity() {
             BasicCodelabTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primary) {
-                    Greeting(nameList)
+                    Box() {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            painter = painterResource(R.mipmap.background),
+                            contentDescription = "background_image",
+                            contentScale = ContentScale.FillBounds
+                        )
+
+                        Greeting(nameList)
+                    }
                 }
             }
         }
@@ -48,23 +61,38 @@ class MainActivity : ComponentActivity() {
 fun Greeting(names: List<String>) {
     val localContext = LocalContext.current
     val expanded = remember { mutableStateOf(false) }
-    Surface(color = MaterialTheme.colorScheme.secondary, modifier = Modifier.wrapContentSize().clip(RoundedCornerShape(10))) {
+    Surface(color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.wrapContentSize().clip(RoundedCornerShape(10))) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
-            val mods = Modifier.wrapContentSize(align = Alignment.Center).border(2.dp, Color.Red, RoundedCornerShape(10)).padding(8.dp).weight(0.5f)
+            val mods = Modifier
+                .wrapContentSize(align = Alignment.Center)
+                .border(2.dp, Color.Red, RoundedCornerShape(10))
+                .padding(8.dp)
+                .weight(0.5f)
             Column(mods) {
-                val mods2 = Modifier.wrapContentSize(align = Alignment.Center).border(2.dp, Color.Yellow, RoundedCornerShape(30)).padding(8.dp)
+                val mods2 = Modifier
+                    .wrapContentSize(align = Alignment.Center)
+                    .border(2.dp, Color.Yellow, RoundedCornerShape(30))
+                    .padding(8.dp)
                 for (name in names) {
-                    Surface(color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(4.dp).wrapContentSize().clip(RoundedCornerShape(30))) {
+                    Surface(color = MaterialTheme.colorScheme.primary, modifier = Modifier
+                        .padding(4.dp)
+                        .wrapContentSize()
+                        .clip(RoundedCornerShape(30))) {
                         Text(text = "Hello $name!", modifier = mods2)
                     }
                 }
             }
-            ElevatedButton(modifier = Modifier.padding(8.dp).weight(0.5f),
+            ElevatedButton(modifier = Modifier
+                .padding(8.dp)
+                .weight(0.5f),
                 onClick = { expanded.value = !expanded.value }
             ) {
                 Text(if (expanded.value) "Show Less" else "Show More")
             }
-            ElevatedButton(modifier = Modifier.padding(8.dp).weight(0.5f),
+            ElevatedButton(modifier = Modifier
+                .padding(8.dp)
+                .weight(0.5f),
                 onClick = {
                     val intent = Intent(localContext, PatchingActivity::class.java)
                     startActivity(localContext, intent, null)
@@ -81,7 +109,16 @@ fun Greeting(names: List<String>) {
 fun GreetingPreview() {
     BasicCodelabTheme {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.primary) {
-            Greeting(nameList)
+            Box() {
+                Image(
+                    modifier = Modifier.fillMaxSize(),
+                    painter = painterResource(R.mipmap.background),
+                    contentDescription = "background_image",
+                    contentScale = ContentScale.FillBounds
+                )
+
+                Greeting(nameList)
+            }
         }
     }
 }
