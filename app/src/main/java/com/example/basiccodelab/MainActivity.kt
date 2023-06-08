@@ -1,5 +1,6 @@
 package com.example.basiccodelab
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -24,6 +25,8 @@ import androidx.compose.material3.ElevatedButton
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat.startActivity
 
 val nameList = listOf("World", "Compose")
 
@@ -43,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(names: List<String>) {
+    val localContext = LocalContext.current
     val expanded = remember { mutableStateOf(false) }
     Surface(color = MaterialTheme.colorScheme.secondary, modifier = Modifier.wrapContentSize().clip(RoundedCornerShape(10))) {
         Row(modifier = Modifier.padding(8.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -59,6 +63,14 @@ fun Greeting(names: List<String>) {
                 onClick = { expanded.value = !expanded.value }
             ) {
                 Text(if (expanded.value) "Show Less" else "Show More")
+            }
+            ElevatedButton(modifier = Modifier.padding(8.dp).weight(0.5f),
+                onClick = {
+                    val intent = Intent(localContext, PatchingActivity::class.java)
+                    startActivity(localContext, intent, null)
+                }
+            ) {
+                Text("Patcher")
             }
         }
     }
