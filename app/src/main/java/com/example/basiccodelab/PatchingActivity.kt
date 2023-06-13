@@ -8,13 +8,17 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
@@ -30,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -140,18 +145,42 @@ class PatchingActivity : ComponentActivity() {
         )
     }
 
+    // https://levelup.gitconnected.com/animated-carousel-with-jetpack-compose-7406a5a2b246
+
+    @Composable
+    private fun DotIndicators(numDots: Int, curDot: Int, modifier: Modifier) {
+        Row(modifier = modifier.wrapContentSize()) {
+            repeat(numDots) { itr ->
+                val color = if (curDot == itr) MaterialTheme.colorScheme.inversePrimary else MaterialTheme.colorScheme.primary
+                Box(modifier = Modifier
+                    .padding(2.dp, 2.dp, 2.dp, 16.dp)
+                    .clip(CircleShape)
+                    .background(color)
+                    .size(12.dp))
+            }
+        }
+    }
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun PatchCards() {
         val images = arrayOf(R.mipmap.page1, R.mipmap.page2,
             R.mipmap.page3, R.mipmap.page4, R.mipmap.page5)
 
-        Box(modifier = Modifier.padding(4.dp, 64.dp, 4.dp, 4.dp).wrapContentSize(),
+        Box(modifier = Modifier
+            .padding(4.dp, 64.dp, 4.dp, 4.dp)
+            .fillMaxSize(),
             contentAlignment = Alignment.Center) {
-            HorizontalPager(pageCount = 5) { page ->
-                Image(modifier = Modifier.alpha(0.75f).fillMaxSize(), contentDescription = "page_$page",
+
+            val pagerState = rememberPagerState()
+            HorizontalPager(pageCount = images.size, state = pagerState) { page ->
+                Image(modifier = Modifier
+                    .alpha(0.75f)
+                    .fillMaxSize(), contentDescription = "page_$page",
                     painter = painterResource(images[page]), contentScale = ContentScale.FillBounds)
             }
+
+            DotIndicators(images.size, pagerState.settledPage, Modifier.align(Alignment.BottomCenter))
         }
     }
 
