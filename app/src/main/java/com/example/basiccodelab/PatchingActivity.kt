@@ -1,7 +1,6 @@
 package com.example.basiccodelab
 
 import android.os.Bundle
-import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -19,28 +18,53 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.example.basiccodelab.ui.theme.BasicCodelabTheme
+import kotlin.concurrent.thread
 
 class PatchingActivity : ComponentActivity() {
+
+    companion object {
+        val progressAmount = MutableLiveData<Float>()
+        val progressStatus = MutableLiveData<String>()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            PatchScreen()
+            PatchScreen(progressAmount, progressStatus)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // Fake progress
+
+        var amount = 0.0f
+        thread {
+            while (amount < 1.0f) {
+                progressAmount.postValue(amount)
+                progressStatus.postValue("Patching status: {$amount}")
+                Thread.sleep(100)
+                amount += 0.01f
+            }
         }
     }
 }
@@ -48,19 +72,21 @@ class PatchingActivity : ComponentActivity() {
 @Preview(showBackground = true)
 @Composable
 fun PatchingPreview() {
-    PatchScreen()
+    PatchScreen(PatchingActivity.progressAmount, PatchingActivity.progressStatus)
 }
 
 @Composable
-private fun PatchScreen()
+private fun PatchScreen(amtLive: LiveData<Float>, statusLive: LiveData<String>)
 {
     BasicCodelabTheme {
         Box(contentAlignment = Alignment.TopCenter) {
             Background()
             Column(horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)) {
                 Title()
-                ProgressBar(0.25f, "Downloading patch")
+                ProgressBar(amtLive, statusLive)
                 PatchDetails()
             }
         }
@@ -89,19 +115,18 @@ private fun Title() {
 }
 
 @Composable
-private fun ProgressBar(amount: Float, status: String) {
-    val progressAmount = remember { mutableStateOf(0.0f) }
-
+private fun ProgressBar(amtLive: LiveData<Float>, statusLive: LiveData<String>) {
     // Progress status
-    Text(text = status, color = MaterialTheme.colorScheme.inversePrimary,
+    val status: String? by statusLive.observeAsState()
+    Text(text = (status?:""), color = MaterialTheme.colorScheme.inversePrimary,
         modifier = Modifier
             .padding(4.dp, 4.dp, 4.dp, 8.dp)
             .wrapContentWidth()
     )
 
     // Progress amount
-    progressAmount.value = amount
-    LinearProgressIndicator(progressAmount.value,
+    val amount: Float? by amtLive.observeAsState()
+    LinearProgressIndicator((amount?:0.0f),
         modifier = Modifier.padding(4.dp),
         trackColor = MaterialTheme.colorScheme.primary,
         color = MaterialTheme.colorScheme.inversePrimary
@@ -117,7 +142,9 @@ private fun PatchDetails() {
         contentColor = MaterialTheme.colorScheme.inversePrimary)
 
     // Toggle Button
-    ElevatedButton(modifier = Modifier.wrapContentSize().padding(8.dp, 64.dp, 8.dp, 16.dp),
+    ElevatedButton(modifier = Modifier
+        .wrapContentSize()
+        .padding(8.dp, 64.dp, 8.dp, 16.dp),
         colors = buttColors,
         onClick = {
             showLog.value = !showLog.value
