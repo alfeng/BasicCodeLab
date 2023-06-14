@@ -91,12 +91,11 @@ private fun Buttons()
             .wrapContentSize(),
             colors = buttColors,
             onClick = {
-                val activity = localContext as Activity
-                activity.moveTaskToBack(true)
-                activity.finish()
+                val intent = Intent(localContext, UpdateActivity::class.java)
+                startActivity(localContext, intent, null)
             }
         ) {
-            Text("Exit", fontSize = 24.sp)
+            Text("Update", fontSize = 24.sp)
         }
 
         ElevatedButton(modifier = Modifier
