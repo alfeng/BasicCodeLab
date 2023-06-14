@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -36,7 +37,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.ScaleFactor
+import androidx.compose.ui.layout.lerp
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,6 +49,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.basiccodelab.ui.theme.BasicCodelabTheme
 import kotlin.concurrent.thread
+import kotlin.math.absoluteValue
 
 class PatchingActivity : ComponentActivity() {
 
@@ -66,7 +71,7 @@ class PatchingActivity : ComponentActivity() {
         // Fake progress
         var amount = 0.0f
         thread {
-            while (amount < 1.0f) {
+            while (amount <= 1.0f) {
                 progressAmount.postValue(amount)
                 progressStatus.postValue("Patching status: {$amount}")
                 Thread.sleep(100)
@@ -162,6 +167,18 @@ class PatchingActivity : ComponentActivity() {
     }
 
     @OptIn(ExperimentalFoundationApi::class)
+    private fun Modifier.pageTransition(page: Int, pagerState: PagerState) =
+        graphicsLayer {
+            val pageOffset = ((pagerState.currentPage - page) + pagerState.currentPageOffsetFraction).absoluteValue
+            val transformation = lerp(
+                start = ScaleFactor(0.50f, 0.75f),
+                stop = ScaleFactor(1.0f, 1.0f),
+                fraction = 1.0f - pageOffset.coerceIn(0f, 1f))
+            alpha = transformation.scaleX
+            scaleY = transformation.scaleY
+        }
+
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun PatchCards() {
         val images = arrayOf(R.mipmap.page1, R.mipmap.page2,
@@ -174,8 +191,8 @@ class PatchingActivity : ComponentActivity() {
 
             val pagerState = rememberPagerState()
             HorizontalPager(pageCount = images.size, state = pagerState) { page ->
-                Image(modifier = Modifier
-                    .alpha(0.75f)
+                Image(modifier = Modifier.pageTransition(page = page, pagerState = pagerState)
+                    .alpha(0.85f)
                     .fillMaxSize(), contentDescription = "page_$page",
                     painter = painterResource(images[page]), contentScale = ContentScale.FillBounds)
             }
