@@ -64,6 +64,7 @@ class ConfigActivity : ComponentActivity()
         )
     }
 
+    // Need to create a switch object with parameters
     @Composable
     private fun Switches() {
         val switchColors = SwitchDefaults.colors(
