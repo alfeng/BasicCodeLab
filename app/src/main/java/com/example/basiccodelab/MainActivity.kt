@@ -70,7 +70,7 @@ private fun Background()
 {
     Image(
         modifier = Modifier.fillMaxSize(),
-        painter = painterResource(R.mipmap.background),
+        painter = painterResource(R.mipmap.background2),
         contentDescription = "background_image",
         contentScale = ContentScale.FillBounds
     )
@@ -86,8 +86,21 @@ private fun Buttons()
 
     Row {
         ElevatedButton(modifier = Modifier
-            .padding(8.dp)
-            .weight(0.5f)
+            .padding(2.dp)
+            .weight(0.33f)
+            .wrapContentSize(),
+            colors = buttColors,
+            onClick = {
+                val intent = Intent(localContext, ConfigActivity::class.java)
+                startActivity(localContext, intent, null)
+            }
+        ) {
+            Text("Config", fontSize = 16.sp)
+        }
+
+        ElevatedButton(modifier = Modifier
+            .padding(2.dp)
+            .weight(0.33f)
             .wrapContentSize(),
             colors = buttColors,
             onClick = {
@@ -95,12 +108,12 @@ private fun Buttons()
                 startActivity(localContext, intent, null)
             }
         ) {
-            Text("Update", fontSize = 24.sp)
+            Text("Update", fontSize = 16.sp)
         }
 
         ElevatedButton(modifier = Modifier
-            .padding(8.dp)
-            .weight(0.5f)
+            .padding(2.dp)
+            .weight(0.33f)
             .wrapContentSize(),
             colors = buttColors,
             onClick = {
@@ -108,7 +121,7 @@ private fun Buttons()
                 startActivity(localContext, intent, null)
             }
         ) {
-            Text("Patcher", fontSize = 24.sp)
+            Text("Patcher", fontSize = 16.sp)
         }
     }
 }

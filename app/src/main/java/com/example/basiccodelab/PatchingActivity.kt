@@ -89,7 +89,7 @@ class PatchingActivity : ComponentActivity() {
     @Composable
     private fun PatchScreen(amtLive: LiveData<Float>, statusLive: LiveData<String>)
     {
-        val showLog = remember { mutableStateOf(false) }
+        val showLog = remember { mutableStateOf(true) }
         BasicCodelabTheme {
             Box(contentAlignment = Alignment.TopCenter) {
                 Background()
@@ -114,7 +114,7 @@ class PatchingActivity : ComponentActivity() {
     private fun Background() {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource(R.mipmap.background),
+            painter = painterResource(R.mipmap.background1),
             contentDescription = "background_image",
             contentScale = ContentScale.FillBounds
         )
