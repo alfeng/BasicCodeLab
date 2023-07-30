@@ -5,12 +5,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -154,6 +151,7 @@ class ConfigActivity : ComponentActivity()
         val username = remember { mutableStateOf("") }
         OutlinedTextField(
             value = username.value,
+            modifier = Modifier.padding(8.dp),
             onValueChange = { newText ->
                 username.value = newText },
             label = { Text("Username") },
@@ -167,6 +165,7 @@ class ConfigActivity : ComponentActivity()
         val arguments = remember { mutableStateOf("") }
         OutlinedTextField(
             value = arguments.value,
+            modifier = Modifier.padding(8.dp),
             onValueChange = { newText ->
                 arguments.value = newText },
             label = { Text("Command line arguments") },
@@ -198,6 +197,7 @@ class ConfigActivity : ComponentActivity()
         Text(text = "Version number",
             color = MaterialTheme.colorScheme.inversePrimary,
             modifier = Modifier
+//                .align(Alignment.BottomCenter)
                 .padding(8.dp, 32.dp, 8.dp, 8.dp)
                 .wrapContentWidth(),
             fontSize = 18.sp
