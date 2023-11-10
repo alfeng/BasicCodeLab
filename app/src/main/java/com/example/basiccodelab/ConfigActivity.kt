@@ -107,6 +107,7 @@ class ConfigActivity : ComponentActivity()
             val noCrowd = remember { mutableStateOf(false) }
             val sandbox = remember { mutableStateOf(false) }
             val patching = remember { mutableStateOf(false) }
+            val hashing = remember { mutableStateOf(false) }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "Game Only", color = MaterialTheme.colorScheme.inversePrimary,
@@ -141,6 +142,13 @@ class ConfigActivity : ComponentActivity()
                     modifier = Modifier.padding(4.dp).wrapContentWidth(), fontSize = 18.sp)
                 Switch(checked = patching.value, colors = switchColors, modifier = Modifier.padding(4.dp),
                     onCheckedChange = { patching.value = !patching.value })
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(text = "Hashing", color = MaterialTheme.colorScheme.inversePrimary,
+                    modifier = Modifier.padding(4.dp).wrapContentWidth(), fontSize = 18.sp)
+                Switch(checked = hashing.value, colors = switchColors, modifier = Modifier.padding(4.dp),
+                    onCheckedChange = { hashing.value = !hashing.value })
             }
         }
     }
